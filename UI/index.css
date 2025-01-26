@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@layer utilities {
+    .scrollbar-custom::-webkit-scrollbar {
+      width: 8px; /* Slim scrollbar */
+    }
+    .scrollbar-custom::-webkit-scrollbar-thumb {
+      background-color: #1a202cbc; /* Dark gray thumb */
+      border-radius: 8px; /* Rounded corners */
+    }
+  }
+  
