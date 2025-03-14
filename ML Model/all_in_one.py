@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import requests
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
@@ -10,13 +11,13 @@ model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
 def news_scrape(site_URL):
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+
     }
     try:
         response = requests.get(site_URL, headers=headers)
         response.raise_for_status()
         html_text = response.text
         soup = BeautifulSoup(html_text, 'lxml')
-        news_heading = soup.head.title.text if soup.head and soup.head.title else "No title found"
         news_body_list = soup.body.find_all('p') if soup.body else []
         news_body = " ".join([p.text.strip() for p in news_body_list])
         return news_body.strip()
@@ -24,7 +25,7 @@ def news_scrape(site_URL):
         return None
 
 app = Flask(__name__)
-
+CORS(app)
 @app.route("/summarize", methods=["POST"])
 def summarize():
     try:
@@ -44,9 +45,9 @@ def summarize():
         )
         summary_ids = model.generate(
             inputs["input_ids"],
-            max_length=300,
+            max_length=200,
             min_length=100,
-            num_beams=4
+            num_beams=3
         )
         summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
         return jsonify({"summary": summary})
