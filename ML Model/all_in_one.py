@@ -1,28 +1,12 @@
-from bs4 import BeautifulSoup
+import extraction
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import requests
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 model_name = "./summarizer_model"
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
 
-def news_scrape(site_URL):
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
-    }
-    try:
-        response = requests.get(site_URL, headers=headers)
-        response.raise_for_status()
-        html_text = response.text
-        soup = BeautifulSoup(html_text, 'lxml')
-        news_body_list = soup.body.find_all('p') if soup.body else []
-        news_body = " ".join([p.get_text(strip=True) for p in news_body_list if p.get_text(strip=True)])
-        return news_body.strip() if news_body else None
-    except Exception as e:
-        print(f"Scraping Error: {e}")
-        return None
 app = Flask(__name__)
 CORS(app)
 
@@ -34,9 +18,11 @@ def summarize():
             return jsonify({"error": "Missing 'url' in request body"}), 400
         
         site_url = input_data["url"]
-        max_words = int(input_data.get("max_words", 100))  # Default to 100 if not provided
+        max_words = int(input_data.get("max_words", 100))
 
-        data = news_scrape(site_url)
+        extraction.set_url(site_url)
+        data = extraction.news_scrape()
+
         if not data:
             return jsonify({"error": "Failed to scrape content from the provided URL"}), 500
 
@@ -47,10 +33,11 @@ def summarize():
             padding="longest",
             return_tensors="pt"
         )
+
         def clean_summary(summary, target_length):
             sentences = summary.split(". ")
             final_summary = ""
-            
+
             for sentence in sentences:
                 if len(final_summary.split()) + len(sentence.split()) <= target_length:
                     final_summary += sentence + ". "
