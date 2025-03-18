@@ -62,6 +62,38 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
+    const body = document.body;
+    const html = document.documentElement;
+
+    // Check local storage for dark mode preference
+    chrome.storage.sync.get('darkMode', function(data) {
+        if (data.darkMode === 'enabled') {
+            html.classList.add('dark-mode');
+            body.classList.add('dark-mode');
+            darkModeToggle.textContent = '☀️ Light Mode';
+        } else {
+            html.classList.remove('dark-mode');
+            body.classList.remove('dark-mode');
+            darkModeToggle.textContent = '🌙 Dark Mode';
+        }
+    });
+
+    // Toggle Dark Mode
+    darkModeToggle.addEventListener('click', function () {
+        if (html.classList.contains('dark-mode')) {
+            html.classList.remove('dark-mode');
+            body.classList.remove('dark-mode');
+            darkModeToggle.textContent = '🌙 Dark Mode';
+            chrome.storage.sync.set({ 'darkMode': 'disabled' });
+        } else {
+            html.classList.add('dark-mode');
+            body.classList.add('dark-mode');
+            darkModeToggle.textContent = '☀️ Light Mode';
+            chrome.storage.sync.set({ 'darkMode': 'enabled' });
+        }
+    });
+
     maxWords.addEventListener("input", (event) => {
         document.getElementById("maxWordsValue").innerText = event.target.value;
     });
