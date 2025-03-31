@@ -102,7 +102,7 @@
       border-top: 4px solid #3498db;
       border-radius: 50%;
       width: 20px;
-      height: 25px;
+      height: 20px;
       animation: spin 1s linear infinite;
       margin: auto;
       gap:10px;
@@ -151,6 +151,38 @@
       margin-bottom: 20px;
     }
 
+    .history-container { border: 1px solid red; }
+    .summary-item { margin: 10px; padding: 10px; border: 1px solid #ccc; }
+
+    #history {
+      background-color: #f9f9f9;
+      border-radius: 5px;
+      padding: 10px;
+      margin-top: 10px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    #history h3 {
+      margin-top: 0;
+    }
+
+    #history p {
+      margin-bottom: 5px;
+    }
+
+    #login-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    input[type="text"], input[type="password"] {
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
   </style>
 </head>
 <body>
@@ -187,6 +219,12 @@
     <button id="downloadButton" style="display: none;">Download</button>
     <button id="shareButton" style="display: none;">Share</button>
   </div>
+  
+  <div class="button-container">
+    <button id="historyButton">📜 History</button>
+    <button id="logoutButton">Logout</button>
+  </div>
+  <div id="history" style="display:none;"></div>
 
   <div id="result"></div>
 </body>

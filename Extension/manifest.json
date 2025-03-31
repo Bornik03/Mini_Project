@@ -4,6 +4,8 @@
     "version": "1.0",
     "description": "Summarizes news articles from the current tab",
     "permissions": ["activeTab", "storage", "tabs"],
+    "host_permissions": [
+    "http://localhost:5000/*","http://127.0.0.1:5000/*","http://192.168.226.40:5000/*"  ],
     "action": {
         "default_popup": "popup.html",
         "default_icon": {
